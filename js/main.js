@@ -28,6 +28,10 @@ var GameState = {
 		this.pet = this.game.add.sprite(100, 400, 'pet');
 		this.pet.anchor.setTo(0.5);
 
+		//sprite animation
+		this.pet.animations.add('funnyfaces', [1, 2, 3, 2, 1], 7, false);
+
+
 		// custom properties
 		this.pet.customParams = {health: 100, fun: 100};
 
@@ -120,6 +124,34 @@ var GameState = {
 			var newItem = this.game.add.sprite(x, y, this.selectedItem.key);
 			newItem.anchor.setTo(0.5);
 			newItem.customParams = this.selectedItem.customParams;
+
+			this.uiBlocked = true;
+			var petMovment = this.game.add.tween(this.pet);
+			petMovment.to({x: x, y: y}, 700);
+			petMovment.onComplete.add(function(){
+				
+
+				newItem.destroy();
+
+				//play animaiton
+				this.pet.animations.play('funnyfaces');
+
+				this.uiBlocked = false;
+
+				var stat;
+				for (stat in newItem.customParams) {
+
+					// Remove unwanted prototype propertys
+					if(newItem.customParams.hasOwnProperty(stat)) {  
+						console.log(stat);
+						this.pet.customParams[stat] += newItem.customParams[stat];
+					}
+				}
+
+			}, this);
+
+		  petMovment.start();
+		
 		}
 	}
 
